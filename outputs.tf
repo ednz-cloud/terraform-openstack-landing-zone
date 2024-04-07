@@ -1,61 +1,61 @@
 output "frontend_network" {
-  value       = openstack_networking_network_v2.frontend.*
+  value       = length(openstack_networking_network_v2.frontend) > 0 ? openstack_networking_network_v2.frontend.* : null
   sensitive   = false
   description = "description"
   depends_on  = []
 }
 
 output "frontend_subnet" {
-  value       = openstack_networking_subnet_v2.frontend.*
+  value       = length(openstack_networking_subnet_v2.frontend) > 0 ? openstack_networking_subnet_v2.frontend.* : null
   sensitive   = false
   description = "description"
   depends_on  = []
 }
 
 output "backend_network" {
-  value       = openstack_networking_network_v2.backend.*
+  value       = length(openstack_networking_network_v2.backend) > 0 ? openstack_networking_network_v2.backend.* : null
   sensitive   = false
   description = "description"
   depends_on  = []
 }
 
 output "backend_subnet" {
-  value       = openstack_networking_subnet_v2.backend.*
+  value       = length(openstack_networking_subnet_v2.backend) > 0 ? openstack_networking_subnet_v2.backend.* : null
   sensitive   = false
   description = "description"
   depends_on  = []
 }
 
 output "database_network" {
-  value       = openstack_networking_network_v2.database.*
+  value       = length(openstack_networking_network_v2.database) > 0 ? openstack_networking_network_v2.database.* : null
   sensitive   = false
   description = "description"
   depends_on  = []
 }
 
 output "database_subnets" {
-  value       = openstack_networking_subnet_v2.database.*
+  value       = length(openstack_networking_subnet_v2.database) > 0 ? openstack_networking_subnet_v2.database.* : null
   sensitive   = false
   description = "description"
   depends_on  = []
 }
 
 output "frontend_secgroups" {
-  value       = openstack_networking_secgroup_v2.frontend.*
+  value       = length(openstack_networking_secgroup_v2.frontend) > 0 ? openstack_networking_secgroup_v2.frontend.* : null
   sensitive   = false
   description = "description"
   depends_on  = []
 }
 
 output "backend_secgroups" {
-  value       = openstack_networking_secgroup_v2.backend.*
+  value       = length(openstack_networking_secgroup_v2.backend) > 0 ? openstack_networking_secgroup_v2.backend.* : null
   sensitive   = false
   description = "description"
   depends_on  = []
 }
 
 output "database_secgroups" {
-  value       = openstack_networking_secgroup_v2.database.*
+  value       = length(openstack_networking_secgroup_v2.database) > 0 ? openstack_networking_secgroup_v2.database.* : null
   sensitive   = false
   description = "description"
   depends_on  = []
