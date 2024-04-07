@@ -1,6 +1,8 @@
 # terraform-openstack-lz
 
-Terraform module to deploy a completely customizable OpenStack<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+Terraform module to deploy a completely customizable OpenStack
+
+<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ### Requirements
 
 | Name | Version |
