@@ -65,7 +65,7 @@ resource "openstack_networking_subnet_v2" "frontend" {
   network_id    = openstack_networking_network_v2.frontend[0].id
   prefix_length = var.frontend_subnet_prefix_len
   ip_version    = 4
-  subnetpool_id = var.create_subnetpool ? openstack_networking_subnetpool_v2.this.id : var.public_subnetpool_id
+  subnetpool_id = var.create_subnetpool ? openstack_networking_subnetpool_v2.this[0].id : var.public_subnetpool_id
 }
 
 resource "openstack_networking_subnet_v2" "backend" {
@@ -76,7 +76,7 @@ resource "openstack_networking_subnet_v2" "backend" {
   network_id    = openstack_networking_network_v2.backend[0].id
   prefix_length = var.backend_subnet_prefix_len
   ip_version    = 4
-  subnetpool_id = var.create_subnetpool ? openstack_networking_subnetpool_v2.this.id : var.public_subnetpool_id
+  subnetpool_id = var.create_subnetpool ? openstack_networking_subnetpool_v2.this[0].id : var.public_subnetpool_id
 }
 
 resource "openstack_networking_subnet_v2" "database" {
@@ -87,7 +87,7 @@ resource "openstack_networking_subnet_v2" "database" {
   network_id    = openstack_networking_network_v2.database[0].id
   prefix_length = var.database_subnet_prefix_len
   ip_version    = 4
-  subnetpool_id = var.create_subnetpool ? openstack_networking_subnetpool_v2.this.id : var.database_subnetpool_id
+  subnetpool_id = var.create_subnetpool ? openstack_networking_subnetpool_v2.this[0].id : var.database_subnetpool_id
 }
 
 #! router
