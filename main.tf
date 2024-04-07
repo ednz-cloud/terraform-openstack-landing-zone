@@ -21,7 +21,7 @@ data "openstack_identity_project_v3" "this" {
 resource "openstack_networking_subnetpool_v2" "this" {
   count      = var.create_subnetpool ? 1 : 0
   name       = "${var.project_name}-subnetpool"
-  is_default = true
+  is_default = false
   ip_version = 4
   prefixes   = var.subnetpool_cidr_blocks
 }
