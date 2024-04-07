@@ -80,4 +80,5 @@ No modules.
 | <a name="output_frontend_network"></a> [frontend_network](#output_frontend_network) | description |
 | <a name="output_frontend_secgroups"></a> [frontend_secgroups](#output_frontend_secgroups) | description |
 | <a name="output_frontend_subnet"></a> [frontend_subnet](#output_frontend_subnet) | description |
+| <a name="output_subnetpool"></a> [subnetpool](#output_subnetpool) | n/a |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

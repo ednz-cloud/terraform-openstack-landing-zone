@@ -1,3 +1,7 @@
+output "subnetpool" {
+  value = length(openstack_networking_subnetpool_v2.this) > 0 ? openstack_networking_subnetpool_v2.this.* : null
+}
+
 output "frontend_network" {
   value       = length(openstack_networking_network_v2.frontend) > 0 ? openstack_networking_network_v2.frontend.* : null
   sensitive   = false
