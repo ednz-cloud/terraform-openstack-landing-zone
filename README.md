@@ -59,7 +59,6 @@ No modules.
 | <a name="input_database_subnet_prefix_len"></a> [database_subnet_prefix_len](#input_database_subnet_prefix_len) | The prefix length of the database subnet. Must be between 24 and 32. | `number` | `24` | no |
 | <a name="input_database_subnetpool_id"></a> [database_subnetpool_id](#input_database_subnetpool_id) | The id of the subnetpool to create the databse network from.<br>Since this module can route private subnets to the backbone, it needs to make sure it's not creating overlapping subnets. | `string` | `null` | no |
 | <a name="input_external_network_id"></a> [external_network_id](#input_external_network_id) | The id of the external network to connect the frontend router to. | `string` | `null` | no |
-| <a name="input_external_subnet_id"></a> [external_subnet_id](#input_external_subnet_id) | The id of the external subnet to connect the frontend router to. | `string` | `null` | no |
 | <a name="input_frontend_subnet_prefix_len"></a> [frontend_subnet_prefix_len](#input_frontend_subnet_prefix_len) | The prefix length of the frontend subnet. Must be between 20 and 32. | `number` | `24` | no |
 | <a name="input_project_domain"></a> [project_domain](#input_project_domain) | The domain where this project will be created | `string` | `"default"` | no |
 | <a name="input_project_name"></a> [project_name](#input_project_name) | The name of the project | `string` | n/a | yes |

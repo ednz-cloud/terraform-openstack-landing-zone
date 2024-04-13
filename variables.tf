@@ -191,11 +191,11 @@ variable "external_network_id" {
   default     = null
 }
 
-variable "external_subnet_id" {
-  type        = string
-  description = "The id of the external subnet to connect the frontend router to."
-  default     = null
-}
+# variable "external_subnet_id" {
+#   type        = string
+#   description = "The id of the external subnet to connect the frontend router to."
+#   default     = null
+# }
 
 locals {
   validate_external_network_id = (
@@ -203,9 +203,9 @@ locals {
     var.attach_to_external &&
     var.external_network_id == null
   ) ? tobool("Please pass in the external network ID to attach the frontend router to.") : true
-  validate_external_subnet_id = (
-    var.architecture_tiers > 0 &&
-    var.attach_to_external &&
-    var.external_subnet_id == null
-  ) ? tobool("Please pass in the external subnet ID to attach the frontend router to.") : true
+  # validate_external_subnet_id = (
+  #   var.architecture_tiers > 0 &&
+  #   var.attach_to_external &&
+  #   var.external_subnet_id == null
+  # ) ? tobool("Please pass in the external subnet ID to attach the frontend router to.") : true
 }
