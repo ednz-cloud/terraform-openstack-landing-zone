@@ -63,6 +63,7 @@ No modules.
 | <a name="input_project_domain"></a> [project_domain](#input_project_domain) | The domain where this project will be created | `string` | `"default"` | no |
 | <a name="input_project_name"></a> [project_name](#input_project_name) | The name of the project | `string` | n/a | yes |
 | <a name="input_project_tags"></a> [project_tags](#input_project_tags) | The tags to append to this project | `list(string)` | `[]` | no |
+| <a name="input_public_nameservers"></a> [public_nameservers](#input_public_nameservers) | A list of public DNS servers to upstreams requests to in your subnets.<br>This is not necessary if your openstack deployment already has configured default upstreams for neutron. | `list(string)` | `[]` | no |
 | <a name="input_public_subnetpool_id"></a> [public_subnetpool_id](#input_public_subnetpool_id) | The id of the subnetpool to create the public (first 2 tier) networks from.<br>Since this module can route private subnets to the backbone, it needs to make sure it's not creating overlapping subnets. | `string` | `null` | no |
 | <a name="input_subnetpool_cidr_blocks"></a> [subnetpool_cidr_blocks](#input_subnetpool_cidr_blocks) | The CIDR block for the subnet pool | `list(string)` | <pre>[<br>  "192.168.0.0/21"<br>]</pre> | no |
 

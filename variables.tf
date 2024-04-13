@@ -100,6 +100,15 @@ variable "database_subnet_prefix_len" {
   }
 }
 
+variable "public_nameservers" {
+  type        = list(string)
+  description = <<-EOT
+    A list of public DNS servers to upstreams requests to in your subnets.
+    This is not necessary if your openstack deployment already has configured default upstreams for neutron.
+  EOT
+  default     = []
+}
+
 #! security variables
 variable "create_default_secgroups" {
   type        = bool
@@ -191,21 +200,10 @@ variable "external_network_id" {
   default     = null
 }
 
-# variable "external_subnet_id" {
-#   type        = string
-#   description = "The id of the external subnet to connect the frontend router to."
-#   default     = null
-# }
-
 locals {
   validate_external_network_id = (
     var.architecture_tiers > 0 &&
     var.attach_to_external &&
     var.external_network_id == null
   ) ? tobool("Please pass in the external network ID to attach the frontend router to.") : true
-  # validate_external_subnet_id = (
-  #   var.architecture_tiers > 0 &&
-  #   var.attach_to_external &&
-  #   var.external_subnet_id == null
-  # ) ? tobool("Please pass in the external subnet ID to attach the frontend router to.") : true
 }
