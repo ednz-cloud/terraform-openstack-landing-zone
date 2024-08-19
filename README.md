@@ -8,13 +8,13 @@ Terraform module to deploy a completely customizable OpenStack
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement_terraform) | >= 1.0.0 |
-| <a name="requirement_openstack"></a> [openstack](#requirement_openstack) | ~> 1.54 |
+| <a name="requirement_openstack"></a> [openstack](#requirement_openstack) | >= 1.54 |
 
 ### Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_openstack"></a> [openstack](#provider_openstack) | ~> 1.54 |
+| <a name="provider_openstack"></a> [openstack](#provider_openstack) | >= 1.54 |
 
 ### Modules
 
