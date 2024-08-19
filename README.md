@@ -71,14 +71,15 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_backend_network"></a> [backend_network](#output_backend_network) | description |
-| <a name="output_backend_secgroups"></a> [backend_secgroups](#output_backend_secgroups) | description |
-| <a name="output_backend_subnet"></a> [backend_subnet](#output_backend_subnet) | description |
-| <a name="output_database_network"></a> [database_network](#output_database_network) | description |
-| <a name="output_database_secgroups"></a> [database_secgroups](#output_database_secgroups) | description |
-| <a name="output_database_subnets"></a> [database_subnets](#output_database_subnets) | description |
-| <a name="output_frontend_network"></a> [frontend_network](#output_frontend_network) | description |
-| <a name="output_frontend_secgroups"></a> [frontend_secgroups](#output_frontend_secgroups) | description |
-| <a name="output_frontend_subnet"></a> [frontend_subnet](#output_frontend_subnet) | description |
-| <a name="output_subnetpool"></a> [subnetpool](#output_subnetpool) | n/a |
+| <a name="output_backend_network"></a> [backend_network](#output_backend_network) | The backend network object (as a list), if created |
+| <a name="output_backend_secgroups"></a> [backend_secgroups](#output_backend_secgroups) | The backend security group objects (as a list), if created |
+| <a name="output_backend_subnet"></a> [backend_subnet](#output_backend_subnet) | The backend subnet object (as a list), if created |
+| <a name="output_database_network"></a> [database_network](#output_database_network) | The database network object (as a list), if created |
+| <a name="output_database_secgroups"></a> [database_secgroups](#output_database_secgroups) | The database security group objects (as a list), if created |
+| <a name="output_database_subnet"></a> [database_subnet](#output_database_subnet) | The database subnet object (as a list), if created |
+| <a name="output_frontend_network"></a> [frontend_network](#output_frontend_network) | The frontend network object (as a list), if created |
+| <a name="output_frontend_secgroups"></a> [frontend_secgroups](#output_frontend_secgroups) | The frontend security group objects (as a list), if created |
+| <a name="output_frontend_subnet"></a> [frontend_subnet](#output_frontend_subnet) | The frontend subnet object (as a list), if created |
+| <a name="output_router"></a> [router](#output_router) | The entire router object (as a list), if created |
+| <a name="output_subnetpool"></a> [subnetpool](#output_subnetpool) | The subnetpool object (as a list), if created |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
