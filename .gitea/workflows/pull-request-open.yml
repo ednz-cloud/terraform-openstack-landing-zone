@@ -44,8 +44,19 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
 
-      - name: Install commitizen
+      - name: Install pre-commit
         run: pip3 install pre-commit
+        shell: bash
+        working-directory: ./
+
+      - name: Install pre-commit dependencies
+        run: |
+          # terraform-docs
+          curl -sSLo /tmp/terraform-docs.tar.gz \
+            https://terraform-docs.io/dl/v0.18.0/terraform-docs-v0.18.0-$(uname)-amd64.tar.gz
+          tar -xzf /tmp/terraform-docs.tar.gz
+          chmod +x /tmp/terraform-docs
+          mv /tmp/terraform-docs /usr/local/bin/terraform-docs
         shell: bash
         working-directory: ./
 
