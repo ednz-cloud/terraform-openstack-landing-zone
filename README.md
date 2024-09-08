@@ -2,7 +2,7 @@
 
 Terraform module to deploy a completely customizable OpenStack
 
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- BEGIN_TF_DOCS -->
 ### Requirements
 
 | Name | Version |
@@ -82,4 +82,4 @@ No modules.
 | <a name="output_frontend_subnet"></a> [frontend_subnet](#output_frontend_subnet) | The frontend subnet object (as a list), if created |
 | <a name="output_router"></a> [router](#output_router) | The entire router object (as a list), if created |
 | <a name="output_subnetpool"></a> [subnetpool](#output_subnetpool) | The subnetpool object (as a list), if created |
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- END_TF_DOCS -->

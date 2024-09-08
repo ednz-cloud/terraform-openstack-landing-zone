@@ -34,10 +34,22 @@ jobs:
         shell: bash
         working-directory: ./
 
-      - name: Render terraform docs
-        uses: Dirrk/terraform-docs@v1.0.8
+  pre-commit-check:
+    name: Check pre-commit status
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          tf_docs_working_dir: .
-          tf_docs_output_file: README.md
-          tf_docs_output_method: inject
-          tf_docs_git_push: "true"
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Install commitizen
+        run: pip3 install pre-commit
+        shell: bash
+        working-directory: ./
+
+      - name: Verify pre-commit status
+        run: pre-commit run --all
+        shell: bash
+        working-directory: ./
