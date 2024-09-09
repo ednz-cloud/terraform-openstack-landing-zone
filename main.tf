@@ -11,6 +11,10 @@ terraform {
   }
 }
 
+locals {
+  resource_prefix = lower(var.project_name)
+}
+
 #! data sources
 data "openstack_identity_project_v3" "this" {
   name      = var.project_name
@@ -18,18 +22,26 @@ data "openstack_identity_project_v3" "this" {
 }
 
 #! subnetpools
-resource "openstack_networking_subnetpool_v2" "this" {
-  count      = var.create_subnetpool ? 1 : 0
-  name       = "${var.project_name}-subnetpool"
+resource "openstack_networking_subnetpool_v2" "apps" {
+  count      = var.create_application_subnetpool ? 1 : 0
+  name       = "${local.resource_prefix}-application-subnetpool"
   is_default = false
   ip_version = 4
-  prefixes   = var.subnetpool_cidr_blocks
+  prefixes   = var.application_subnetpool_cidr_blocks
+}
+
+resource "openstack_networking_subnetpool_v2" "database" {
+  count      = var.create_database_subnetpool ? 1 : 0
+  name       = "${local.resource_prefix}-database-subnetpool"
+  is_default = false
+  ip_version = 4
+  prefixes   = var.database_subnetpool_cidr_blocks
 }
 
 #! networks & subnets
 resource "openstack_networking_network_v2" "frontend" {
   count          = var.architecture_tiers > 0 ? 1 : 0
-  name           = "${var.project_name}-frontend-network"
+  name           = "${local.resource_prefix}-frontend-network"
   description    = "Terraform managed."
   tenant_id      = data.openstack_identity_project_v3.this.id
   shared         = false
@@ -39,7 +51,7 @@ resource "openstack_networking_network_v2" "frontend" {
 
 resource "openstack_networking_network_v2" "backend" {
   count          = var.architecture_tiers > 1 ? 1 : 0
-  name           = "${var.project_name}-backend-network"
+  name           = "${local.resource_prefix}-backend-network"
   description    = "Terraform managed."
   tenant_id      = data.openstack_identity_project_v3.this.id
   shared         = false
@@ -49,7 +61,7 @@ resource "openstack_networking_network_v2" "backend" {
 
 resource "openstack_networking_network_v2" "database" {
   count          = var.architecture_tiers == 3 ? 1 : 0
-  name           = "${var.project_name}-database-network"
+  name           = "${local.resource_prefix}-database-network"
   description    = "Terraform managed."
   tenant_id      = data.openstack_identity_project_v3.this.id
   shared         = false
@@ -59,44 +71,44 @@ resource "openstack_networking_network_v2" "database" {
 
 resource "openstack_networking_subnet_v2" "frontend" {
   count           = var.architecture_tiers > 0 ? 1 : 0
-  name            = "${var.project_name}-frontend-subnet-${count.index + 1}"
+  name            = "${local.resource_prefix}-frontend-subnet-${count.index + 1}"
   description     = "Terraform managed."
   tenant_id       = data.openstack_identity_project_v3.this.id
   network_id      = openstack_networking_network_v2.frontend[0].id
   prefix_length   = var.frontend_subnet_prefix_len
   ip_version      = 4
-  subnetpool_id   = var.create_subnetpool ? openstack_networking_subnetpool_v2.this[0].id : var.public_subnetpool_id
+  subnetpool_id   = var.create_application_subnetpool ? openstack_networking_subnetpool_v2.apps[0].id : var.application_subnetpool_id
   dns_nameservers = var.public_nameservers
 }
 
 resource "openstack_networking_subnet_v2" "backend" {
   count           = var.architecture_tiers > 1 ? 1 : 0
-  name            = "${var.project_name}-backend-subnet-${count.index + 1}"
+  name            = "${local.resource_prefix}-backend-subnet-${count.index + 1}"
   description     = "Terraform managed."
   tenant_id       = data.openstack_identity_project_v3.this.id
   network_id      = openstack_networking_network_v2.backend[0].id
   prefix_length   = var.backend_subnet_prefix_len
   ip_version      = 4
-  subnetpool_id   = var.create_subnetpool ? openstack_networking_subnetpool_v2.this[0].id : var.public_subnetpool_id
+  subnetpool_id   = var.create_application_subnetpool ? openstack_networking_subnetpool_v2.apps[0].id : var.application_subnetpool_id
   dns_nameservers = var.public_nameservers
 }
 
 resource "openstack_networking_subnet_v2" "database" {
   count           = var.architecture_tiers == 3 ? 1 : 0
-  name            = "${var.project_name}-database-subnet-${count.index + 1}"
+  name            = "${local.resource_prefix}-database-subnet-${count.index + 1}"
   description     = "Terraform managed."
   tenant_id       = data.openstack_identity_project_v3.this.id
   network_id      = openstack_networking_network_v2.database[0].id
   prefix_length   = var.database_subnet_prefix_len
   ip_version      = 4
-  subnetpool_id   = var.create_subnetpool ? openstack_networking_subnetpool_v2.this[0].id : var.database_subnetpool_id
+  subnetpool_id   = var.create_application_subnetpool ? openstack_networking_subnetpool_v2.database[0].id : var.database_subnetpool_id
   dns_nameservers = var.public_nameservers
 }
 
 #! router
 resource "openstack_networking_router_v2" "this" {
   count               = var.architecture_tiers > 0 ? 1 : 0
-  name                = "${var.project_name}-main-${count.index + 1}"
+  name                = "${local.resource_prefix}-main-${count.index + 1}"
   description         = "Terraform managed."
   tenant_id           = data.openstack_identity_project_v3.this.id
   external_network_id = var.attach_to_external ? var.external_network_id : null
@@ -128,7 +140,7 @@ resource "openstack_networking_secgroup_v2" "frontend" {
     var.create_default_secgroups
   ) ? 1 : 0
 
-  name                 = "${var.project_name}-frontend-secgroup"
+  name                 = "${local.resource_prefix}-frontend-secgroup"
   description          = "Terraform managed."
   tenant_id            = data.openstack_identity_project_v3.this.id
   delete_default_rules = true
@@ -163,7 +175,7 @@ resource "openstack_networking_secgroup_v2" "backend" {
     var.architecture_tiers > 1 &&
     var.create_default_secgroups
   ) ? 1 : 0
-  name                 = "${var.project_name}-backend-secgroup"
+  name                 = "${local.resource_prefix}-backend-secgroup"
   description          = "Terraform managed."
   tenant_id            = data.openstack_identity_project_v3.this.id
   delete_default_rules = true
@@ -198,7 +210,7 @@ resource "openstack_networking_secgroup_v2" "database" {
     var.architecture_tiers == 3 &&
     var.create_default_secgroups
   ) ? length(local.db_secgroups) : 0
-  name                 = "${var.project_name}-database-${local.db_secgroups[count.index].type}-secgroup"
+  name                 = "${local.resource_prefix}-database-${local.db_secgroups[count.index].type}-secgroup"
   description          = "Terraform managed."
   tenant_id            = data.openstack_identity_project_v3.this.id
   delete_default_rules = true
