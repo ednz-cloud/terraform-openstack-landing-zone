@@ -32,7 +32,7 @@ jobs:
       - name: Install commitizen
         run: pip3 install commitizen
         shell: bash
-        working-directory: ./
+        working-directory: ${{ gitea.workspace }}
 
       - name: Configure git credentials
         uses: oleksiyrudenko/gha-git-credentials@v2
@@ -46,9 +46,9 @@ jobs:
       - name: Do release
         run: cz -nr 21 bump --yes
         shell: bash
-        working-directory: ./
+        working-directory: ${{ gitea.workspace }}
 
       - name: Push release
         run: git push && git push --tags
         shell: bash
-        working-directory: ./
+        working-directory: ${{ gitea.workspace }}

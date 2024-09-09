@@ -41,9 +41,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
 
       - name: Install pre-commit
         run: pip3 install pre-commit
@@ -74,5 +71,44 @@ jobs:
 
       - name: Verify pre-commit status
         run: pre-commit run --all
+        shell: bash
+        working-directory: ${{ gitea.workspace }}
+
+  end-to-end-tests:
+    name: Run E2E tofu tests
+    runs-on: ubuntu-latest
+    needs: pre-commit-check
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install required packages
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+          sudo apt update
+          sudo apt install -y curl jq
+
+          curl https://vault.ednz.fr/v1/ednz-root-ca/ca -o /tmp/ednz_ca
+          openssl x509 -inform DER -in /tmp/ednz_ca -out /usr/local/share/ca-certificates/ednz_ca.crt -outform pem
+          update-ca-certificates
+
+      - name: Install OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: 1.8.2
+
+      - name: Get required credentials
+        id: tofu-auth
+        run: |
+          VAULT_TOKEN=$(curl --silent --request POST --data '{"role_id": "${{ steps.import-secrets.outputs.VAULT_INFRABUILDER_APPROLE_ID }}","secret_id": "${{ steps.import-secrets.outputs.VAULT_INFRABUILDER_APPROLE_SECRET_ID }}"}' https://vault.ednz.fr/v1/auth/approle/login | jq -r .auth.client_token)
+          echo "vault_token=$VAULT_TOKEN" >> $GITHUB_OUTPUT
+
+      - name: Tofu init
+        run: tofu init
+        shell: bash
+        working-directory: ${{ gitea.workspace }}
+
+      - name: Tofu test
+        run: tofu test
         shell: bash
         working-directory: ${{ gitea.workspace }}

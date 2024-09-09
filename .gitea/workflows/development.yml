@@ -16,11 +16,11 @@ jobs:
       - name: Install commitizen
         run: pip3 install commitizen
         shell: bash
-        working-directory: ./
+        working-directory: ${{ gitea.workspace }}
 
       - name: Verify commit message compliance
         run: |
           echo "cz check --message '${{ github.event.head_commit.message }}'"
           cz check --message "${{ github.event.head_commit.message }}"
         shell: bash
-        working-directory: ./
+        working-directory: ${{ gitea.workspace }}
