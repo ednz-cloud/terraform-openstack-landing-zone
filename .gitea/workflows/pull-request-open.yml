@@ -112,3 +112,5 @@ jobs:
         run: tofu test
         shell: bash
         working-directory: ${{ gitea.workspace }}
+        env:
+          VAULT_TOKEN: ${{ steps.tofu-auth.outputs.vault_token }}

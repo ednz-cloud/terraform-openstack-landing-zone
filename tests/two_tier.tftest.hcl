@@ -25,7 +25,7 @@ run "two_tier" {
 
   assert {
     condition = module.landing_zone.database_subnetpool == null
-    error_message = "The database subnetpool does not seem correct"
+    error_message = "The database subnetpool is not null"
   }
 
   assert {
