@@ -205,9 +205,8 @@ locals {
 variable "attach_to_external" {
   type        = bool
   description = <<-EOT
-    Whether the frontend subnet should be routed or not to the external LAN.
-    This options implies that you have sufficient permissions to configure static route on the backbone infrastructure.
-    This will create an static route entry in the route table of the backbone router, in order to make your project available from the outside.
+    Whether to attach the router to an external network.
+    This will add a gateway interface to the router, and possibly consume a public IP address which might be billed by your cloud provider.
   EOT
   default     = false
 }
