@@ -1,7 +1,14 @@
-output "subnetpool" {
-  value       = length(openstack_networking_subnetpool_v2.this) > 0 ? openstack_networking_subnetpool_v2.this.* : null
+output "apps_subnetpool" {
+  value       = length(openstack_networking_subnetpool_v2.apps) > 0 ? openstack_networking_subnetpool_v2.apps.* : null
   sensitive   = false
-  description = "The subnetpool object (as a list), if created"
+  description = "The application subnetpool object (as a list), if created"
+  depends_on  = []
+}
+
+output "database_subnetpool" {
+  value       = length(openstack_networking_subnetpool_v2.database) > 0 ? openstack_networking_subnetpool_v2.database.* : null
+  sensitive   = false
+  description = "The database subnetpool object (as a list), if created"
   depends_on  = []
 }
 

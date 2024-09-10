@@ -1,13 +1,4 @@
 #! global variables
-variable "project_name" {
-  type        = string
-  description = "The name of the project"
-  validation {
-    condition     = can(regex("^[0-9A-Za-z-_]+$", var.project_name))
-    error_message = "For the project_name value only a-z, A-Z, 0-9, - and _ are allowed."
-  }
-}
-
 variable "project_domain" {
   type        = string
   description = "The domain where this project will be created"
@@ -148,27 +139,6 @@ variable "database_secgroup_strict" {
   default     = false
 }
 
-locals {
-  db_secgroups = [
-    {
-      type         = "mariadb"
-      ingress_port = 3306
-    },
-    {
-      type         = "postgresql"
-      ingress_port = 5432
-    },
-    {
-      type         = "mysql"
-      ingress_port = 3306
-    },
-    {
-      type         = "redis"
-      ingress_port = 6379
-    }
-  ]
-}
-
 #! subnetpool variables & validation
 variable "application_subnetpool_id" {
   type        = string
@@ -188,19 +158,6 @@ variable "database_subnetpool_id" {
   default     = null
 }
 
-locals {
-  validate_application_subnetpool_ids = (
-    var.architecture_tiers > 0 &&
-    var.create_application_subnetpool == false &&
-    var.application_subnetpool_id == null
-  ) ? tobool("You have to either create or specify an existing subnetpool to create the public subnets from") : true
-  validate_database_subnetpool_ids = (
-    var.architecture_tiers > 2 &&
-    var.create_database_subnetpool == false &&
-    var.database_subnetpool_id == null
-  ) ? tobool("You have to either create or specify an existing subnetpool to create the database subnets from") : true
-}
-
 #! public network attachement variables
 variable "attach_to_external" {
   type        = bool
@@ -209,18 +166,4 @@ variable "attach_to_external" {
     This will add a gateway interface to the router, and possibly consume a public IP address which might be billed by your cloud provider.
   EOT
   default     = false
-}
-
-variable "external_network_id" {
-  type        = string
-  description = "The id of the external network to connect the frontend router to."
-  default     = null
-}
-
-locals {
-  validate_external_network_id = (
-    var.architecture_tiers > 0 &&
-    var.attach_to_external &&
-    var.external_network_id == null
-  ) ? tobool("Please pass in the external network ID to attach the frontend router to.") : true
 }

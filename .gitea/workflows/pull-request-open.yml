@@ -1,0 +1,128 @@
+---
+name: pull-requests-open
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+    branches:
+      - main
+
+jobs:
+  commit-history-check:
+    name: Check commit compliance
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Install commitizen
+        run: pip3 install commitizen
+        shell: bash
+        working-directory: ${{ gitea.workspace }}
+
+      - run: git log origin/${{ github.event.pull_request.base.ref }}..
+
+      - name: Verify commit message compliance
+        run: |
+          echo "cz check --rev-range origin/${{ gitea.event.pull_request.base.ref }}.."
+          cz check --rev-range origin/${{ gitea.event.pull_request.base.ref }}..
+        shell: bash
+        working-directory: ${{ gitea.workspace }}
+
+  pre-commit-check:
+    name: Check pre-commit status
+    runs-on: ubuntu-latest
+    needs: commit-history-check
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pre-commit
+        run: pip3 install pre-commit
+        shell: bash
+        working-directory: ${{ gitea.workspace }}
+
+      - name: Install pre-commit dependencies
+        run: |
+          # terraform-docs
+          curl -sSLo /tmp/terraform-docs.tar.gz \
+            https://terraform-docs.io/dl/${TERRAFORM_DOCS_VERSION}/terraform-docs-${TERRAFORM_DOCS_VERSION}-$(uname)-amd64.tar.gz
+          tar -xzf /tmp/terraform-docs.tar.gz -C /tmp
+          chmod +x /tmp/terraform-docs
+          mv /tmp/terraform-docs /usr/local/bin/terraform-docs
+          rm -rf /tmp/*
+
+          # opentofu
+          curl --proto '=https' --tlsv1.2 -fsSL https://get.opentofu.org/install-opentofu.sh \
+            -o install-opentofu.sh
+          chmod +x install-opentofu.sh
+          ./install-opentofu.sh --install-method standalone --opentofu-version $OPENTOFU_VERSION
+          rm -f install-opentofu.sh
+        shell: bash
+        working-directory: ${{ gitea.workspace }}
+        env:
+          OPENTOFU_VERSION: 1.8.0
+          TERRAFORM_DOCS_VERSION: v0.18.0
+
+      - name: Verify pre-commit status
+        run: pre-commit run --all
+        shell: bash
+        working-directory: ${{ gitea.workspace }}
+
+  end-to-end-tests:
+    name: Run E2E tofu tests
+    runs-on: ubuntu-latest
+    needs: pre-commit-check
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install required packages
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+          sudo apt update
+          sudo apt install -y curl jq
+
+          curl https://vault.ednz.fr/v1/ednz-root-ca/ca -o /tmp/ednz_ca
+          openssl x509 -inform DER -in /tmp/ednz_ca -out /usr/local/share/ca-certificates/ednz_ca.crt -outform pem
+          update-ca-certificates
+
+      - name: Install OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: 1.8.2
+
+      - name: Get secrets from vault
+        id: import-secrets
+        uses: hashicorp/vault-action@v3
+        with:
+          url: "https://vault.ednz.fr"
+          method: approle
+          roleId: ${{ secrets.VAULT_APPROLE_ID }}
+          secretId: ${{ secrets.VAULT_APPROLE_SECRET_ID }}
+          secrets: |
+            kv/data/cicd/vault/infrabuilder approle_id | VAULT_INFRABUILDER_APPROLE_ID ;
+            kv/data/cicd/vault/infrabuilder approle_secret_id | VAULT_INFRABUILDER_APPROLE_SECRET_ID ;
+
+      - name: Get required credentials
+        id: tofu-auth
+        run: |
+          VAULT_TOKEN=$(curl --silent --request POST --data '{"role_id": "${{ steps.import-secrets.outputs.VAULT_INFRABUILDER_APPROLE_ID }}","secret_id": "${{ steps.import-secrets.outputs.VAULT_INFRABUILDER_APPROLE_SECRET_ID }}"}' https://vault.ednz.fr/v1/auth/approle/login | jq -r .auth.client_token)
+          echo "vault_token=$VAULT_TOKEN" >> $GITHUB_OUTPUT
+
+      - name: Tofu init
+        run: tofu init
+        shell: bash
+        working-directory: ${{ gitea.workspace }}
+
+      - name: Tofu test
+        run: tofu test
+        shell: bash
+        working-directory: ${{ gitea.workspace }}
+        env:
+          VAULT_TOKEN: ${{ steps.tofu-auth.outputs.vault_token }}
