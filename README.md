@@ -1,6 +1,11 @@
-# terraform-openstack-lz
+# terraform-openstack-landing-zone
 
-Terraform module to deploy a completely customizable OpenStack
+Terraform/OpenTofu module to deploy a completely customizable OpenStack network architecture.
+
+![Terraform Badge](https://img.shields.io/badge/Terraform-844FBA?logo=terraform&logoColor=fff&style=for-the-badge)
+![OpenTofu Badge](https://img.shields.io/badge/OpenTofu-FFDA18?logo=opentofu&logoColor=000&style=for-the-badge)
+![OpenStack Badge](https://img.shields.io/badge/OpenStack-ED1944?logo=openstack&logoColor=fff&style=for-the-badge)
+
 
 <!-- BEGIN_TF_DOCS -->
 ### Requirements

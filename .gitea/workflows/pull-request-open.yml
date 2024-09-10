@@ -97,10 +97,22 @@ jobs:
         with:
           tofu_version: 1.8.2
 
+      - name: Get secrets from vault
+        id: import-secrets
+        uses: hashicorp/vault-action@v3
+        with:
+          url: "https://vault.ednz.fr"
+          method: approle
+          roleId: ${{ secrets.VAULT_APPROLE_ID }}
+          secretId: ${{ secrets.VAULT_APPROLE_SECRET_ID }}
+          secrets: |
+            kv/data/cicd/vault/infrabuilder approle_id | VAULT_INFRABUILDER_APPROLE_ID ;
+            kv/data/cicd/vault/infrabuilder approle_secret_id | VAULT_INFRABUILDER_APPROLE_SECRET_ID ;
+
       - name: Get required credentials
         id: tofu-auth
         run: |
-          VAULT_TOKEN=$(curl --silent --request POST --data '{"role_id": "${{ secrets.VAULT_APPROLE_ID }}","secret_id": "${{ secrets.VAULT_APPROLE_SECRET_ID }}"}' https://vault.ednz.fr/v1/auth/approle/login | jq -r .auth.client_token)
+          VAULT_TOKEN=$(curl --silent --request POST --data '{"role_id": "${{ steps.import-secrets.outputs.VAULT_INFRABUILDER_APPROLE_ID }}","secret_id": "${{ steps.import-secrets.outputs.VAULT_INFRABUILDER_APPROLE_SECRET_ID }}"}' https://vault.ednz.fr/v1/auth/approle/login | jq -r .auth.client_token)
           echo "vault_token=$VAULT_TOKEN" >> $GITHUB_OUTPUT
 
       - name: Tofu init
