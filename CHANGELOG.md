@@ -1,3 +1,13 @@
+## v0.2.0 (2024-09-30)
+
+### Feat
+
+- add network_internal_domain_name variable to allow declaring internal dns resolution for networks
+
+### Fix
+
+- correctly tag resources
+
 ## v0.1.0 (2024-09-10)
 
 ### Feat
