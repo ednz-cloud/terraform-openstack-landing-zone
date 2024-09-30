@@ -28,6 +28,7 @@ resource "openstack_networking_subnetpool_v2" "apps" {
   is_default = false
   ip_version = 4
   prefixes   = var.application_subnetpool_cidr_blocks
+  tags       = var.project_tags
 }
 
 resource "openstack_networking_subnetpool_v2" "database" {
@@ -36,6 +37,7 @@ resource "openstack_networking_subnetpool_v2" "database" {
   is_default = false
   ip_version = 4
   prefixes   = var.database_subnetpool_cidr_blocks
+  tags       = var.project_tags
 }
 
 #! networks & subnets
@@ -48,6 +50,7 @@ resource "openstack_networking_network_v2" "frontend" {
   shared         = false
   admin_state_up = "true"
   mtu            = 1450
+  tags           = var.project_tags
 }
 
 resource "openstack_networking_network_v2" "backend" {
@@ -59,6 +62,7 @@ resource "openstack_networking_network_v2" "backend" {
   shared         = false
   admin_state_up = "true"
   mtu            = 1450
+  tags           = var.project_tags
 }
 
 resource "openstack_networking_network_v2" "database" {
@@ -70,6 +74,7 @@ resource "openstack_networking_network_v2" "database" {
   shared         = false
   admin_state_up = "true"
   mtu            = 1450
+  tags           = var.project_tags
 }
 
 resource "openstack_networking_subnet_v2" "frontend" {
@@ -82,6 +87,7 @@ resource "openstack_networking_subnet_v2" "frontend" {
   ip_version      = 4
   subnetpool_id   = var.create_application_subnetpool ? openstack_networking_subnetpool_v2.apps[0].id : var.application_subnetpool_id
   dns_nameservers = var.public_nameservers
+  tags            = var.project_tags
 }
 
 resource "openstack_networking_subnet_v2" "backend" {
@@ -94,6 +100,7 @@ resource "openstack_networking_subnet_v2" "backend" {
   ip_version      = 4
   subnetpool_id   = var.create_application_subnetpool ? openstack_networking_subnetpool_v2.apps[0].id : var.application_subnetpool_id
   dns_nameservers = var.public_nameservers
+  tags            = var.project_tags
 }
 
 resource "openstack_networking_subnet_v2" "database" {
@@ -106,6 +113,7 @@ resource "openstack_networking_subnet_v2" "database" {
   ip_version      = 4
   subnetpool_id   = var.create_application_subnetpool ? openstack_networking_subnetpool_v2.database[0].id : var.database_subnetpool_id
   dns_nameservers = var.public_nameservers
+  tags            = var.project_tags
 }
 
 #! router
@@ -116,6 +124,7 @@ resource "openstack_networking_router_v2" "this" {
   tenant_id           = data.openstack_identity_project_v3.this.id
   external_network_id = var.attach_to_external ? var.external_network_id : null
   admin_state_up      = true
+  tags                = var.project_tags
 }
 
 resource "openstack_networking_router_interface_v2" "frontend" {
@@ -147,6 +156,7 @@ resource "openstack_networking_secgroup_v2" "frontend" {
   description          = "Terraform managed."
   tenant_id            = data.openstack_identity_project_v3.this.id
   delete_default_rules = true
+  tags                 = var.project_tags
 }
 
 resource "openstack_networking_secgroup_rule_v2" "frontend_egress" {
@@ -182,6 +192,7 @@ resource "openstack_networking_secgroup_v2" "backend" {
   description          = "Terraform managed."
   tenant_id            = data.openstack_identity_project_v3.this.id
   delete_default_rules = true
+  tags                 = var.project_tags
 }
 
 resource "openstack_networking_secgroup_rule_v2" "backend_egress" {
@@ -217,6 +228,7 @@ resource "openstack_networking_secgroup_v2" "database" {
   description          = "Terraform managed."
   tenant_id            = data.openstack_identity_project_v3.this.id
   delete_default_rules = true
+  tags                 = var.project_tags
 }
 
 resource "openstack_networking_secgroup_rule_v2" "database_egress" {
