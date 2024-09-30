@@ -42,6 +42,7 @@ resource "openstack_networking_subnetpool_v2" "database" {
 resource "openstack_networking_network_v2" "frontend" {
   count          = var.architecture_tiers > 0 ? 1 : 0
   name           = "${local.resource_prefix}-frontend-network"
+  dns_domain     = var.network_internal_domain_name
   description    = "Terraform managed."
   tenant_id      = data.openstack_identity_project_v3.this.id
   shared         = false
@@ -52,6 +53,7 @@ resource "openstack_networking_network_v2" "frontend" {
 resource "openstack_networking_network_v2" "backend" {
   count          = var.architecture_tiers > 1 ? 1 : 0
   name           = "${local.resource_prefix}-backend-network"
+  dns_domain     = var.network_internal_domain_name
   description    = "Terraform managed."
   tenant_id      = data.openstack_identity_project_v3.this.id
   shared         = false
@@ -62,6 +64,7 @@ resource "openstack_networking_network_v2" "backend" {
 resource "openstack_networking_network_v2" "database" {
   count          = var.architecture_tiers == 3 ? 1 : 0
   name           = "${local.resource_prefix}-database-network"
+  dns_domain     = var.network_internal_domain_name
   description    = "Terraform managed."
   tenant_id      = data.openstack_identity_project_v3.this.id
   shared         = false

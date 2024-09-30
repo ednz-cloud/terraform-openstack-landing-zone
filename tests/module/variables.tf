@@ -70,6 +70,12 @@ variable "database_subnetpool_cidr_blocks" {
 }
 
 #! networking variables
+variable "network_internal_domain_name" {
+  type        = string
+  description = "The domain name to use for dns resolution inside the private networks"
+  default     = null
+}
+
 variable "frontend_subnet_prefix_len" {
   type        = number
   description = "The prefix length of the frontend subnet. Must be between 20 and 32."
