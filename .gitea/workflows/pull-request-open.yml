@@ -93,7 +93,7 @@ jobs:
           update-ca-certificates
 
       - name: Install OpenTofu
-        uses: opentofu/setup-opentofu@v1
+        uses: opentofu/setup-opentofu@v2
         with:
           tofu_version: 1.8.2
 
